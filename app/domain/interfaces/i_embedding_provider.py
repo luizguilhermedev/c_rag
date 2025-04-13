@@ -1,18 +1,18 @@
 from abc import ABC, abstractmethod
 from typing import List
-from domain.entities.chunk import Chunk
-from domain.entities.embedding import Embedding
+from app.domain.entities.chunk import Chunk
+from app.domain.entities.embedding import Embedding
 
 
 class IEmbeddingProcessor(ABC):
-    """Interface para provedores de embeddings."""
+    """Interface for embedding providers."""
 
     @abstractmethod
     def embed_chunk(self, chunk: Chunk) -> Embedding:
-        """Gera embedding para um chunk de texto."""
+        """Generates an embedding for a text chunk."""
         pass
 
     @abstractmethod
     def embed_chunks(self, chunks: List[Chunk]) -> List[Embedding]:
-        """Gera embeddings para múltiplos chunks."""
+        """Generates embeddings for multiple chunks."""
         pass

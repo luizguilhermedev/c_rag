@@ -8,13 +8,13 @@ class Embedding:
 
     vector: List[float]
     chunk_id: Optional[str] = None
-    text: Optional[str] = None  # Adicionando o campo text
+    text: Optional[str] = None
 
     def to_dict(self) -> dict:
         """
-        Converte o objeto Embedding em um dicionário.
+        Converts the Embedding object into a dictionary.
 
         Returns:
-            dict: Representação do embedding como dicionário.
+            dict: Representation of the embedding as a dictionary.
         """
         return asdict(self)

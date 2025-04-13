@@ -31,8 +31,8 @@ class GraphBuilder:
 
         docs_content = "\n\n".join(doc.content for doc in tool_messages)
         system_message_content = (
-            "You are a very helpfull assistant for question-answering tasks related to 'The origin of the species' from the well known Darwin. "
-            "Use the following pieces of retrieved context to answer "
+            "You are a very helpfull assistant for question-answering tasks. "
+            "Use only the following pieces of retrieved context to answer "
             "the question. If you don't know the answer, say that you "
             "don't know."
             "\n\n"

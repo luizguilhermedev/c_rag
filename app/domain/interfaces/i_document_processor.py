@@ -4,17 +4,30 @@ from app.domain.entities.chunk import Chunk
 
 
 class IDocumentProcessor(ABC):
-    """Interface para processamento de documentos."""
+    """Interface for document processing."""
 
     @abstractmethod
     def chunk_text(self, text: str) -> List[Chunk]:
         """
-        Realiza o chunking de um texto simples.
+        Performs chunking of a plain text.
 
         Args:
-            text (str): Texto a ser dividido em chunks.
+            text (str): Text to be split into chunks.
 
         Returns:
-            List[Chunk]: Lista de chunks gerados.
+            List[Chunk]: List of generated chunks.
+        """
+        pass
+
+    @abstractmethod
+    def chunk_json(self, json_data: str) -> List[Chunk]:
+        """
+        Performs chunking of a JSON file.
+
+        Args:
+            json_data (str): Path to the JSON file to be processed.
+
+        Returns:
+            List[Chunk]: List of generated chunks.
         """
         pass

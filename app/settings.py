@@ -31,6 +31,8 @@ class Settings(BaseSettings):
         "./vector_store"  # Caminho para armazenamento persistente
     )
 
+    CHAT_MODEL: str = "gpt-4o-mini"
+
     model_config = SettingsConfigDict(
         env_file=[".env"], env_file_encoding="utf-8", extra="ignore"
     )

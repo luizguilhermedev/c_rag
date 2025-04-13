@@ -5,20 +5,20 @@ from app.domain.entities.embedding import Embedding
 
 class IVectorStore(ABC):
     """
-    Interface para bancos vetoriais.
+    Interface for vector stores.
     """
 
     @abstractmethod
     def direct_search(self, query: str, n_results: int = 5) -> List[Embedding]:
         """
-        Recupera embeddings semelhantes a partir do banco vetorial.
+        Retrieves similar embeddings from the vector store.
 
         Args:
-            query (str): Texto de consulta.
-            n_results (int): Número de resultados a serem retornados.
+            query (str): Query text.
+            n_results (int): Number of results to return.
 
         Returns:
-            List[Embedding]: Lista de embeddings recuperados.
+            List[Embedding]: List of retrieved embeddings.
         """
         pass
 
@@ -27,11 +27,11 @@ class IVectorStore(ABC):
         self, texts: List[str], metadatas: List[Dict] = None, ids: List[str] = None
     ) -> None:
         """
-        Adiciona textos diretamente ao banco vetorial, usando a função de embedding para gerar os embeddings.
+        Adds texts directly to the vector store, using the embedding function to generate embeddings.
 
         Args:
-            texts (List[str]): Lista de textos a serem adicionados.
-            metadatas (List[Dict], optional): Metadados associados a cada texto.
-            ids (List[str], optional): IDs dos documentos.
+            texts (List[str]): List of texts to be added.
+            metadatas (List[Dict], optional): Metadata associated with each text.
+            ids (List[str], optional): Document IDs.
         """
         pass

@@ -1,5 +1,5 @@
 from langgraph.checkpoint.memory import MemorySaver
-from app.graph.graph_builder import GraphBuilder
+from app.infrastructure.graph.graph_builder import GraphBuilder
 from app.infrastructure.initialize_llm import initialize_llm
 from app.application.tools.retrieve_tool import retriever_tool
 from langchain.schema import AIMessage
@@ -39,16 +39,6 @@ class AISubmissionService:
         ):
             responses.append(step["messages"][-1])
 
-        # Filtrar e retornar o último AIMessage
         ai_messages = [msg for msg in responses if isinstance(msg, AIMessage)]
         return ai_messages[-1] if ai_messages else None
 
-
-# Exemplo de uso
-# submission_service = AISubmissionService()
-# config = {"configurable": {"thread_id": "ab"}}
-# response = submission_service.process_submission("What Darwin found in galapagos", config)
-# if response:
-#     print("Último AIMessage:", response.content)
-# else:
-#     print("Nenhum AIMessage encontrado.")
