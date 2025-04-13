@@ -2,14 +2,7 @@ name: lint-tests
 
 on:
   push:
-    branches:
-    [
-      'main',
-      'dev',
-      'feature/*',
-      'bugfix/*',
-      'hotfix/*'
-    ]
+    branches: [main, dev, feat/*]
   pull_request:
 
 
