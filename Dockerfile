@@ -5,7 +5,7 @@ FROM python:3.12-slim-bookworm AS base
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=off \
-    PIP_DISABLE_PIP_VERSION_CHECK=on 
+    PIP_DISABLE_PIP_VERSION_CHECK=on
 
 # Create a non-root user
 RUN adduser --gecos "FastAPI User" --disabled-password --quiet "fastapi-user" --uid 1001 --gid 0 --home /opt/fastapi-app/

@@ -1,8 +1,6 @@
 from langchain_core.tools import tool
 from app.infrastructure.vector_store.chroma_vector_store import ChromaVectorStore
 
-from app.settings import settings
-
 
 @tool(response_format="content_and_artifact")
 def retriever_tool(query: str):

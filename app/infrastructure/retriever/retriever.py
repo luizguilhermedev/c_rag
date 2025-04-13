@@ -3,10 +3,6 @@ from app.infrastructure.vector_store.chroma_vector_store import ChromaVectorStor
 
 
 class Retriever(ChromaVectorStore):
-    """
-    Implementação do retriever usando ChromaDB via LangChain.
-    """
-
     def __init__(self, collection_name: str, persist_directory: str):
         super().__init__(collection_name, persist_directory)
         logging.info(
@@ -15,9 +11,3 @@ class Retriever(ChromaVectorStore):
 
     def as_retriever(self, n_results=5):
         return super().direct_search(n_results=n_results)
-
-
-retriever = Retriever(
-    collection_name="book_embeddings",
-    persist_directory="/home/luizg/projects/cadastra/rag-boticario/data/chroma_db",
-)

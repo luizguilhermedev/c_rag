@@ -1,9 +1,4 @@
-import json
 import logging
-import os
-from typing import List, Dict, Any
-from app.domain.entities.embedding import Embedding
-from app.domain.entities.chunk import Chunk
 from app.domain.interfaces.i_vector_store import IVectorStore
 from app.infrastructure.embeddings.embedding_processor import EmbeddingProcessor
 from app.infrastructure.processors.text_document_processor import DocumentProcessor

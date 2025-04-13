@@ -1,6 +1,5 @@
 import logging
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
 from app.application.services.ai_submission_service import AISubmissionService
 from langchain.schema import AIMessage
 

@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import List, Dict
-from domain.entities.document import Document
-from domain.entities.chunk import Chunk
+from typing import List
+from app.domain.entities.chunk import Chunk
 
 
 class IDocumentProcessor(ABC):

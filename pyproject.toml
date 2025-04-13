@@ -1,5 +1,5 @@
 [project]
-name = "rag-boticario"
+name = "clean_rag"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -11,6 +11,7 @@ dependencies = [
     "langchain-experimental>=0.3.4",
     "langchain-openai>=0.3.12",
     "langgraph>=0.3.29",
+    "pre-commit>=4.2.0",
     "pydantic-settings>=2.8.1",
     "ruff>=0.11.5",
     "setuptools>=78.1.0",

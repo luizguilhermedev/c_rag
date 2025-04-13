@@ -1,17 +1,15 @@
-from typing import List, Dict
+from typing import List
 from app.domain.interfaces.i_document_processor import IDocumentProcessor
-from domain.entities.chunk import Chunk
-from domain.entities.document import Document
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+from app.domain.entities.chunk import Chunk
 from langchain_experimental.text_splitter import SemanticChunker
 from langchain_community.document_loaders import TextLoader
 from langchain_openai.embeddings import OpenAIEmbeddings
-from settings import settings
+from app.settings import settings
 
 
 class DocumentProcessor(IDocumentProcessor):
     """
-    Processador para realizar chunking em um JSON estruturado com seções específicas.
+    Documnet processor which chunks text using a semantic chunker.
     """
 
     def __init__(self):
@@ -22,35 +20,40 @@ class DocumentProcessor(IDocumentProcessor):
             breakpoint_threshold_amount=0.7,
             breakpoint_threshold_type="percentile",
         )
+        self.text_loader = TextLoader
 
-    def chunk_text(self, text: str) -> List[Chunk]:
+    def _clean_text(self, text: str) -> str:
         """
-        Realiza o chunking de um texto simples.
+        Normalize text by removing extra spaces and newlines.
+        """
+        return " ".join(text.split())
 
+    def chunk_text(self, path_to_text: str) -> List[Chunk]:
+        """
+        Chunks a simple text document.
+        It uses the TextLoader from langchain to load the text and SemanticChunker to split it into chunks.
         Args:
-            text: Texto a ser dividido em chunks.
+            text: The path to the text document to be chunked.
 
         Returns:
-            List[Chunk]: Lista de chunks gerados.
+            List[Chunk]: List of Chunk objects containing the text chunks.
         """
 
-        loader = TextLoader(text)
+        loader = self.text_loader(path_to_text)
         documents = loader.load()
-        document_texts = [doc.page_content for doc in documents]
-        concatenated_text = " ".join(document_texts)
+        _document_texts = [self._clean_text(doc.page_content) for doc in documents]
+        concatenated_text = " ".join(_document_texts)
 
         text_chunks = self.semantic_chunker.split_text(concatenated_text)
 
-        # Converte os chunks de texto para objetos Chunk
         chunks = [Chunk(text=text, metadata={}) for text in text_chunks]
 
         return chunks
 
 
-# Script de teste
-# if __name__ == "__main__":
-#     processor = DocumentProcessor()
-#     text = "data/the Origin of Species.txt"
-#     chunks = processor.chunk_text(text)
-#     for chunk in chunks:
-#         print(chunk)
+if __name__ == "__main__":
+    processor = DocumentProcessor()
+    text = "data/the Origin of Species.txt"
+    chunks = processor.chunk_text(text)
+    for chunk in chunks:
+        print(chunk)

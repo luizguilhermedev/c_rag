@@ -29,10 +29,9 @@ class GraphBuilder:
                 break
         tool_messages = recent_tool_messages[::-1]
 
-        # Format into prompt
         docs_content = "\n\n".join(doc.content for doc in tool_messages)
         system_message_content = (
-            "You are an assistant for question-answering tasks. "
+            "You are a very helpfull assistant for question-answering tasks related to 'The origin of the species' from the well known Darwin. "
             "Use the following pieces of retrieved context to answer "
             "the question. If you don't know the answer, say that you "
             "don't know."
@@ -47,7 +46,6 @@ class GraphBuilder:
         ]
         prompt = [SystemMessage(system_message_content)] + conversation_messages
 
-        # Run
         response = self.llm.invoke(prompt)
         return {"messages": [response]}
 

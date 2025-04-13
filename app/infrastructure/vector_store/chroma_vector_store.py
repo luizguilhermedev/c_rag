@@ -9,7 +9,7 @@ from app.settings import settings
 
 class ChromaVectorStore(IVectorStore):
     """
-    Implementação do banco vetorial usando ChromaDB via LangChain.
+    Vector store implementation using ChromaDB via LangChain.
     """
 
     def __init__(
@@ -23,49 +23,34 @@ class ChromaVectorStore(IVectorStore):
         logging.info(
             f"Inicializando ChromaDB com coleção '{collection_name}' em '{persist_directory}'"
         )
-
-        # Inicializa a função de embedding
         self.embedding_function = OpenAIEmbeddings(
             model=settings.EMBEDDING_MODEL, openai_api_key=settings.OPENAI_API_KEY
         )
-
-        # Inicializa o ChromaDB
         self.vector_store = Chroma(
             collection_name=self.collection_name,
             embedding_function=self.embedding_function,
             persist_directory=self.persist_directory,
         )
-        logging.info(f"ChromaDB inicializado com sucesso com função de embedding")
 
     def add_texts_directly(
         self, texts: List[str], metadatas: List[Dict] = None, ids: List[str] = None
     ) -> None:
         """
-        Adiciona textos diretamente ao ChromaDB, usando a função de embedding para gerar os embeddings.
+        Adds texts directly to ChromaDB using the embedding function to generate embeddings.
 
         Args:
-            texts (List[str]): Lista de textos a serem adicionados.
-            metadatas (List[Dict], optional): Metadados associados a cada texto.
-            ids (List[str], optional): IDs dos documentos.
+            texts (List[str]): Text list to be added.
+            metadatas (List[Dict], optional): Metadata for each text.
+            ids (List[str], optional): Document IDs for each text.
         """
-        logging.info(
-            f"Adicionando {len(texts)} textos ao ChromaDB usando a função de embedding"
-        )
 
         try:
-            # Usa add_texts para adicionar textos e gerar embeddings automaticamente
             self.vector_store.add_texts(texts=texts, metadatas=metadatas, ids=ids)
-            logging.info(f"Textos adicionados com sucesso")
+            logging.info("Textos adicionados com sucesso")
         except Exception as e:
             logging.error(f"Erro ao adicionar textos: {str(e)}")
             raise
 
     def direct_search(self, query: str, n_results: int = 5) -> List[Embedding]:
-        """ """
-        logging.info(
-            f"Recuperando {n_results} embeddings semelhantes para a consulta: '{query}'"
-        )
-
         results = self.vector_store.similarity_search(query, k=n_results)
-
         return results
