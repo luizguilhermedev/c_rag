@@ -1,7 +1,17 @@
 name: lint-tests
 
 on:
+  push:
+    branches:
+    [
+      'main',
+      'dev',
+      'feature/*',
+      'bugfix/*',
+      'hotfix/*'
+    ]
   pull_request:
+
 
 jobs:
   pre-commit:
