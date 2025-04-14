@@ -1,4 +1,4 @@
-# Arquitetura
+![Captura de tela 2025-04-14 093007](https://github.com/user-attachments/assets/67d21989-9368-4bbb-9bc9-d3f3155b5d7d)# Arquitetura
 
 O projeto utiliza a arquitetura RAG - Retrieval Augmented Generation - que aprimora a geração de respostas de IA através da recuperação contextual de informações relevantes. O sistema processa documentos de entrada, extrai conhecimento estruturado e utiliza esse conhecimento para fornecer respostas mais precisas e fundamentadas.
 
@@ -79,7 +79,13 @@ Geração de Embeddings (OpenAI)
    ▼
 Armazenamento no Banco Vetorial (ChromaDB)
 
+![Captura de tela 2025-04-14 091631](https://github.com/user-attachments/assets/547ed71a-a9a4-405f-bfdd-362620306127)
+
+
 2. **Suporte a JSON**: Utilização de um Agent para processar o documento de texto(txt) em um JSON estruturado:
+
+![Captura de tela 2025-04-14 091543](https://github.com/user-attachments/assets/d3a1e33c-97bb-49aa-af84-8b5f880dae38)
+
 ```
     {
         {
@@ -88,6 +94,37 @@ Armazenamento no Banco Vetorial (ChromaDB)
         }
     }
 ```
+
+# Estratégia RAG
+
+O sistema segue uma arquitetura baseada em agentes com fluxo controlado por grafo (LangGraph), composta por duas etapas principais:
+
+1. Retrieval (Ingestão e Ferramenta de Busca)
+
+Normalização e pré-processamento do conteúdo textual.
+
+Segmentação semântica com SemanticChunker (via LangChain).
+
+Geração de embeddings utilizando modelos da OpenAI.
+
+Armazenamento vetorial no ChromaDB para posterior recuperação.
+
+O ToolNode encapsula o mecanismo de busca, ativado dinamicamente via LangGraph.
+
+2. Generation (Fluxo com LLM e LangGraph)
+O serviço AISubmissionService inicializa o LLM, define o retriever_tool e constrói o grafo com GraphBuilder.
+
+Ao receber um input_message, o método process_submission itera sobre o grafo compilado (self.graph).
+
+Dentro do fluxo do LangGraph:
+
+O nó query_or_respond decide se o LLM deve responder diretamente ou invocar ferramentas.
+
+Caso ferramentas sejam necessárias (tools_condition), o fluxo segue para o ToolNode que executa a busca com base no contexto.
+
+A resposta é gerada
+
+![Captura de tela 2025-04-14 093007](https://github.com/user-attachments/assets/f03adf4b-b436-4a54-bc8a-e7b0616e8e83)
 
 
 # API
