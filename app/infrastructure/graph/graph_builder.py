@@ -20,7 +20,7 @@ class GraphBuilder:
         self.retrieve_tool = retrieve_tool if retrieve_tool else retrieve
         self.graph_builder = StateGraph(MessagesState)
         self.memory = MemorySaver()
-        self.config = {"configurable": {"thread_id": "abc123"}}
+        self.config = {"configurable": {"thread_id": "abc1234"}}
 
     def query_or_respond(self, state: MessagesState):
         """Generate tool call for retrieval or respond."""

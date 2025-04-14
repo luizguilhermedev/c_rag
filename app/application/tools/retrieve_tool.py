@@ -29,11 +29,9 @@ def retriever_tool(query: str):
             )
             return "No documents available in the knowledge base.", []
 
-    # Realizar a busca
-    retrieved_docs = vector_store.direct_search(query=query, n_results=4)
+    retrieved_docs = vector_store.direct_search(query=query, n_results=6)
     logger.info(f"Retrieved {len(retrieved_docs)} documents")
 
-    # Log dos documentos recuperados
     for i, doc in enumerate(retrieved_docs):
         logger.info(f"Document {i+1} content preview: {doc.page_content[:100]}...")
         logger.info(f"Document {i+1} metadata: {doc.metadata}")

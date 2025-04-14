@@ -14,4 +14,4 @@ class SubmissionResponse(BaseModel):
 
     content: str
     retrieved_docs: Optional[List[RetrievedDocument]] = None
-    thread_id: Optional[str] = None
+
