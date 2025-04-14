@@ -8,6 +8,7 @@ O projeto está organizado seguindo o Design Pattern baseado em Clean Code. Poss
 
 ## Estrutura do Projeto
 
+```
 .
 ├── app/
 │   ├── main.py
@@ -54,6 +55,7 @@ O projeto está organizado seguindo o Design Pattern baseado em Clean Code. Poss
 │   └── prd.txt
 ├── pyproject.toml
 └── README.md
+```
 
 
 
