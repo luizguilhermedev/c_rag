@@ -138,7 +138,7 @@ Também temos a API de maneira conteinerizada via Docker.
 
 Este projeto utiliza uv para gerenciamento de dependências.
 
-Criar ambiente virtual:
+* Criar ambiente virtual:
 
 `uv venv`
 
@@ -146,13 +146,21 @@ Ativando o ambiente virtual:
 
 `source .venv/bin/activate`
 
-Gerando o requirements:
+* Gerando o requirements:
 
 `make reqs`
 
-Instalando as dependencias:
+* Instalando as dependencias:
 
 `make sync`
+
+* Crie um arquivo .env na raiz do projeto:
+
+`touch .env`
+
+Adicione as seguintes variáveis de ambiente:
+
+OPENAI_API_KEY=sua_chave_api_openai
 
 ## "Rodando" a API via DOCKER
 
@@ -219,3 +227,39 @@ Caso enfrente algum problema ao subir a aplicação:
 ```bash
 docker logs <nome-do-container>
 ```
+
+# Tecnologias e Frameworks Utilizados
+O projeto é construído utilizando as seguintes tecnologias e frameworks:
+
+## Core
+- Python 3.10+: Linguagem de programação principal
+- FastAPI: Framework web para construção da API REST
+- LangChain: Biblioteca para operações com LLMs e processamento de documentos
+- LangGraph: Controle de fluxo conversacional com memória
+- OpenAI API: Geração de embeddings e interação com modelos LLM
+
+## Armazenamento e Processamento
+- ChromaDB: Banco de dados vetorial para armazenamento e recuperação de embeddings
+- SemanticChunker: Ferramenta de chunking de textos baseada em significado
+## DevOps
+- Docker: Conteinerização da aplicação
+- Docker Compose: Orquestração de contêineres
+- uv: Gerenciador de dependências Python
+- GitHub Actions: CI para verificação de lint
+
+## Bibliotecas Auxiliares
+- Pydantic: Validação de dados e configurações
+- Uvicorn: Servidor ASGI para executar a aplicação FastAPI
+
+# Melhorias
+
+Por se tratar de um case técnico e quase uma POC, existem diversas melhorias que podem ser feitas ao longo do tempo com o produto.
+
+- Utilização de arquitetura **Self Reflective Agent** para garantir que o Agent garanta que o conteúdo recuperado está dentro dos padrões esperados.
+- Criação e implementação de Tools personalizadas para que os Agents possam consultar APIs externas e motores de busca externos, melhorando ainda mais a qualidade do conteúdo recuperado.
+    - Poderiamos ter uma API com n estratégias de busca no banco vetorial e o Agent utilizaria essa API para recuperar conteúdo de maneira muito mais eficaz.
+    - Consulta a APIs que disponibilizam livros - O Agent teria acesso ao material na íntegra, evitando perdas com chunking.
+- Implementação de wrapper próprio para garantir maior segurança e controle dos dados - Embora o projeto já utilize padrão de arquitetura limpa(que isola as diversas partes do projeto), a criação de um wrapper próprio traria ainda mais flexibilidade, modularidade e segurança.
+- Utilização de Banco Vetorial mais robusto como QDrant ou PineCone, que trariam maiores possibilidades e estratégias de busca vetorial e semântica.
+- Criação de Retriever próprio ou de retrievers com maior precisão.
+- CI/CD - Hoje o projeto conta com CI utilizando github actions - para verificação de lint. Com o projeto em produção, seria interessante implementar o CI para também criar imagens docker em serviços como ECR ou GCK. Também podemos criar o CD para deploy em um POD(exemplo ArgoCD) utilizando Kubernets para orquestração dos jobs. Assim teriamos o flow completo de CI/CD.
