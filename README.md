@@ -116,7 +116,7 @@ Instalando as dependencias:
 
 `make sync`
 
-## "Rodando" a API
+## "Rodando" a API via DOCKER
 
 Certificar que está com o docker instalado:
 
@@ -153,6 +153,13 @@ curl -X POST http://localhost:8000/submission \
 ## Testar API localmente com debugger
 
 Executar o debugger com o arquivo launcher.json
+
+# Requisição de exemplo com cURL
+```
+curl -X POST http://localhost:8000/submission \
+     -H "Content-Type: application/json" \
+     -d '{"input_message": "Como Darwin explica a seleção natural?", "config": {"thread_id": "conversa1"}}'
+```
 
 # Logs e Troubleshooting
 
