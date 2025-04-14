@@ -92,7 +92,8 @@ Armazenamento no Banco Vetorial (ChromaDB)
 
 # API
 
-O modelo conversacional é disponibilizado via API containerizada com Docker.
+O modelo conversacional é disponibilizado via API FastAPI.
+Também temos a API de maneira conteinerizada via Docker.
 
 
 
@@ -145,9 +146,14 @@ O thread_id é utilizado para manter o histórico de conversa com o chatbot.
 
 ## Testar a API localmente - DOCKER
 ```
-curl -X POST http://localhost:8000/submission \
-     -H "Content-Type: application/json" \
-     -d '{"input_message": "Explique a seleção natural", "config": {"thread_id": "exemplo123"}}'
+curl -X POST http://127.0.0.1:8000/api/v1/darwin-chat-bot/ai-submission \
+  -H "Content-Type: application/json" \
+  -d '{
+    "input_message": "Qual é a importância da variação nas espécies domesticadas?",
+    "config": {
+      "configurable": {"thread_id":"sua_thread_id"}
+    }
+}'
 ```
 
 ## Testar API localmente com debugger
@@ -156,9 +162,14 @@ Executar o debugger com o arquivo launcher.json
 
 # Requisição de exemplo com cURL
 ```
-curl -X POST http://localhost:8000/submission \
-     -H "Content-Type: application/json" \
-     -d '{"input_message": "Como Darwin explica a seleção natural?", "config": {"thread_id": "conversa1"}}'
+curl -X POST http://127.0.0.1:8000/api/v1/darwin-chat-bot/ai-submission \
+  -H "Content-Type: application/json" \
+  -d '{
+    "input_message": "Qual é a importância da variação nas espécies domesticadas?",
+    "config": {
+      "configurable": {"thread_id":"sua_thread_id"}
+    }
+}'
 ```
 
 # Logs e Troubleshooting
