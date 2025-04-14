@@ -5,8 +5,10 @@ from langchain_experimental.text_splitter import SemanticChunker
 from langchain_community.document_loaders import TextLoader, JSONLoader
 from langchain_openai.embeddings import OpenAIEmbeddings
 from app.settings import settings
-import logging
+from app.logs import get_logger
 import json
+
+logger = get_logger(__name__)
 
 
 class DocumentProcessor(IDocumentProcessor):
@@ -46,6 +48,7 @@ class DocumentProcessor(IDocumentProcessor):
         documents = loader.load()
         _document_texts = [self._clean_text(doc.page_content) for doc in documents]
         concatenated_text = " ".join(_document_texts)
+        logger.info(f"first pagra of the text: {concatenated_text[:100]}...")
 
         text_chunks = self.semantic_chunker.split_text(concatenated_text)
 
@@ -63,62 +66,52 @@ class DocumentProcessor(IDocumentProcessor):
         Returns:
             List[Chunk]: List of Chunk objects containing the text chunks.
         """
-        logging.info(f"Processing JSON: {json_path}")
-        
+        logger.info(f"Processing JSON: {json_path}")
+
         # Load the JSON file directly
-        with open(json_path, 'r', encoding='utf-8') as file:
+        with open(json_path, "r", encoding="utf-8") as file:
             json_data = json.load(file)
 
         chunks = []
 
-        # Process the book content
         if "book_content" in json_data:
-            logging.info("Extracting book content...")
+            logger.info("Extracting book content...")
             book_text = self._clean_text(json_data["book_content"])
-            logging.info(f"Book text size: {len(book_text)} characters")
+            logger.info(f"Book text size: {len(book_text)} characters")
             book_chunks = self.semantic_chunker.split_text(book_text)
-            logging.info(f"Chunks generated from book: {len(book_chunks)}")
+            logger.info(f"Chunks generated from book: {len(book_chunks)}")
             for chunk_text in book_chunks:
-                chunks.append(Chunk(
-                    text=chunk_text,
-                    metadata={"source_type": "book_content", "source": json_path}
-                ))
+                chunks.append(
+                    Chunk(
+                        text=chunk_text,
+                        metadata={"source_type": "book_content", "source": json_path},
+                    )
+                )
 
-        # Process the summary content
         if "summary_content" in json_data:
-            logging.info("Extracting summary content...")
+            logger.info("Extracting summary content...")
             summary_text = self._clean_text(json_data["summary_content"])
-            logging.info(f"Summary text size: {len(summary_text)} characters")
+            logger.info(f"Summary text size: {len(summary_text)} characters")
             summary_chunks = self.semantic_chunker.split_text(summary_text)
-            logging.info(f"Chunks generated from summary: {len(summary_chunks)}")
+            logger.info(f"Chunks generated from summary: {len(summary_chunks)}")
             for chunk_text in summary_chunks:
-                chunks.append(Chunk(
-                    text=chunk_text,
-                    metadata={"source_type": "summary_content", "source": json_path}
-                ))
+                chunks.append(
+                    Chunk(
+                        text=chunk_text,
+                        metadata={
+                            "source_type": "summary_content",
+                            "source": json_path,
+                        },
+                    )
+                )
 
-        logging.info(f"Total chunks generated: {len(chunks)}")
-        return chunks
-
-    def chunk_text(self, text: str):
-        """
-        Chunks a plain text string.
-
-        Args:
-            text (str): The text to be chunked.
-
-        Returns:
-            List[Chunk]: List of generated chunks.
-        """
-        logging.info(f"Processing text to generate chunks. Text size: {len(text)} characters")
-        chunks = []  # Your chunking logic here
-        logging.info(f"Chunks generated: {len(chunks)}")
+        logger.info(f"Total chunks generated: {len(chunks)}")
         return chunks
 
 
-if __name__ == "__main__":
-    processor = DocumentProcessor()
-    text = "data/the Origin of Species.txt"
-    chunks = processor.chunk_text(text)
-    for chunk in chunks:
-        print(chunk)
+# if __name__ == "__main__":
+#     processor = DocumentProcessor()
+#     text = "data/the Origin of Species.txt"
+#     chunks = processor.chunk_text(text)
+#     for chunk in chunks:
+#         print(chunk)

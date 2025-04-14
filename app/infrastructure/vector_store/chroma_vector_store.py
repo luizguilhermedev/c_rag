@@ -1,10 +1,12 @@
-import logging
 from typing import List, Dict
 from langchain_chroma import Chroma
 from langchain_openai import OpenAIEmbeddings
 from app.domain.entities.embedding import Embedding
 from app.domain.interfaces.i_vector_store import IVectorStore
 from app.settings import settings
+from app.logs import get_logger
+
+logger = get_logger(__name__)
 
 
 class ChromaVectorStore(IVectorStore):
@@ -20,7 +22,7 @@ class ChromaVectorStore(IVectorStore):
     ):
         self.collection_name = collection_name
         self.persist_directory = persist_directory
-        logging.info(
+        logger.info(
             f"Inicializando ChromaDB com coleção '{collection_name}' em '{persist_directory}'"
         )
         self.embedding_function = OpenAIEmbeddings(
@@ -46,9 +48,24 @@ class ChromaVectorStore(IVectorStore):
 
         try:
             self.vector_store.add_texts(texts=texts, metadatas=metadatas, ids=ids)
-            logging.info("Textos adicionados com sucesso")
+            logger.info("Added succesfully to ChromaDB.")
         except Exception as e:
-            logging.error(f"Erro ao adicionar textos: {str(e)}")
+            logger.error(f"Error Adding: {str(e)}")
+            raise
+
+    def add_documents_directly(self, documents, ids: List[str] = None) -> None:
+        """
+        Adds documents directly to ChromaDB.
+
+        Args:
+            documents (List[Embedding]): Documents to be added.
+            ids (List[str], optional): Document IDs for each document.
+        """
+        try:
+            self.vector_store.add_documents(documents=documents, ids=ids)
+            logger.info("Added succesfully to ChromaDB.")
+        except Exception as e:
+            logger.error(f"Error Adding: {str(e)}")
             raise
 
     def direct_search(self, query: str, n_results: int = 5) -> List[Embedding]:

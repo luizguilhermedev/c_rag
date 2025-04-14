@@ -1,8 +1,23 @@
 version: "3.8"
 services:
   app:
-    image: rag-boticario
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: clean-rag:latest
     ports:
       - "8000:8000"
     env_file:
       - .env
+    environment:
+      - VECTOR_STORE_PATH=/opt/fastapi-app/data/chroma_db
+      - ENVIRONMENT=docker  # Define o ambiente como Docker
+    volumes:
+      - ./data:/opt/fastapi-app/data
+    command: >
+      bash -c "
+        echo 'Verificando banco vetorial...' &&
+        ls -la /opt/fastapi-app/data &&
+        ls -la /opt/fastapi-app/data/chroma_db &&
+        uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+      "

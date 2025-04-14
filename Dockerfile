@@ -19,6 +19,11 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
 
+# Criar diretórios de dados necessários
+RUN mkdir -p /opt/fastapi-app/data/chroma_db \
+    && chown -R fastapi-user:0 /opt/fastapi-app/data \
+    && chmod -R 755 /opt/fastapi-app/data
+
 # Switch to non-root user
 USER fastapi-user
 
@@ -39,6 +44,9 @@ FROM base AS app
 
 # Copy application files
 COPY --chown=fastapi-user:0 ./app/ /opt/fastapi-app/app/
+
+# Copiar dados existentes (se houver)
+COPY --chown=fastapi-user:0 ./data/ /opt/fastapi-app/data/
 
 # Expose port
 EXPOSE 8000

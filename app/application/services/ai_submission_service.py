@@ -1,44 +1,38 @@
-from langgraph.checkpoint.memory import MemorySaver
+from app.application.interfaces.i_ai_submission_service import IAISubmissionService
 from app.infrastructure.graph.graph_builder import GraphBuilder
-from app.infrastructure.initialize_llm import initialize_llm
-from app.application.tools.retrieve_tool import retriever_tool
-from langchain.schema import AIMessage
+from langchain_core.messages import HumanMessage
 
 
-class AISubmissionService:
+class AISubmissionService(IAISubmissionService):
     """
     Service for handling AI submissions using a prebuilt graph.
     """
 
-    def __init__(self):
-        # Initialize dependencies
-        self.llm = initialize_llm()
-        self.retrieve_tool = retriever_tool
+    def __init__(self, llm=None, retrieve_tool=None):
+        """Initialize the service with a graph builder."""
+        self.graph_builder = GraphBuilder(llm=llm, retrieve_tool=retrieve_tool)
+        self.graph = self.graph_builder.build_graph()
 
-        self.graph_builder = GraphBuilder(self.llm, self.retrieve_tool)
-        self.graph = self.graph_builder.build_graph().compile(
-            checkpointer=MemorySaver()
-        )
-
-    def process_submission(self, input_message: str, config: dict) -> AIMessage:
+    def process_message(self, input_message):
         """
-        Process an AI submission using the graph.
+        Process a message through the graph and stream responses.
 
         Args:
-            input_message (str): The input message from the user.
-            config (dict): Configuration for the graph execution.
+            input_message (str): User input message
 
         Returns:
-            AIMessage: The last AIMessage from the processed messages.
+            list: List of response messages
         """
+        human_message = HumanMessage(content=input_message)
+
         responses = []
         for step in self.graph.stream(
-            {"messages": [{"role": "user", "content": input_message}]},
+            {"messages": [human_message]},
             stream_mode="values",
-            config=config,
+            config=self.graph_builder.config,
         ):
+            step["messages"][-1].pretty_print()
+
             responses.append(step["messages"][-1])
 
-        ai_messages = [msg for msg in responses if isinstance(msg, AIMessage)]
-        return ai_messages[-1] if ai_messages else None
-
+        return responses
