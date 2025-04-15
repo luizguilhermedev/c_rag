@@ -1,12 +1,12 @@
 from typing import List, Dict, Any, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, UUID4
 
 
 class RetrievedDocument(BaseModel):
     """Model representing a retrieved document."""
 
     content: str
-    metadata: Dict[str, Any]
+    metadata: dict = {}
 
 
 class SubmissionResponse(BaseModel):
@@ -14,4 +14,7 @@ class SubmissionResponse(BaseModel):
 
     content: str
     retrieved_docs: Optional[List[RetrievedDocument]] = None
+    thread_id: UUID4 = Field(
+        description="The conversation thread ID to use in subsequent requests"
+    )
 

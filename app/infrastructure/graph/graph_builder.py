@@ -1,3 +1,4 @@
+from uuid import uuid4
 from langchain_core.messages import SystemMessage
 from langgraph.graph import END, MessagesState, StateGraph
 from langchain.chat_models import init_chat_model
@@ -11,7 +12,7 @@ class GraphBuilder:
     Builds the state graph for AI submissions.
     """
 
-    def __init__(self, llm=None, retrieve_tool=None):
+    def __init__(self, llm=None, retrieve_tool=None, thread_id: uuid4 = None):
         if llm is None:
             self.llm = init_chat_model("gpt-4o-mini", model_provider="openai")
         else:
@@ -20,7 +21,11 @@ class GraphBuilder:
         self.retrieve_tool = retrieve_tool if retrieve_tool else retrieve
         self.graph_builder = StateGraph(MessagesState)
         self.memory = MemorySaver()
-        self.config = {"configurable": {"thread_id": "abc1234"}}
+
+        if thread_id is None:
+            thread_id = str(uuid4())
+            
+        self.config = {"configurable": {"thread_id": thread_id}}
 
     def query_or_respond(self, state: MessagesState):
         """Generate tool call for retrieval or respond."""
@@ -40,11 +45,11 @@ class GraphBuilder:
 
         docs_content = "\n\n".join(doc.content for doc in tool_messages)
         system_message_content = (
-            "You are an assistant for question-answering tasks related to the well know book 'The origin of the species'. "
+            "You are an assistant for question-answering tasks related to the well know book 'The origin of the species'."
             "Use the following pieces of retrieved context to answer "
             "the question. If you don't know the answer, say that you "
-            "don't know. Use three sentences maximum and keep the "
-            "answer concise."
+            "don't know."
+            "Keep the politeness and the tone of the conversation."
             "\n\n"
             f"{docs_content}"
         )

@@ -1,4 +1,8 @@
+import re
+
 from typing import List
+import json
+
 from app.domain.interfaces.i_document_processor import IDocumentProcessor
 from app.domain.entities.chunk import Chunk
 from langchain_experimental.text_splitter import SemanticChunker
@@ -6,7 +10,7 @@ from langchain_community.document_loaders import TextLoader, JSONLoader
 from langchain_openai.embeddings import OpenAIEmbeddings
 from app.settings import settings
 from app.logs import get_logger
-import json
+
 
 logger = get_logger(__name__)
 
@@ -27,11 +31,18 @@ class DocumentProcessor(IDocumentProcessor):
         self.text_loader = TextLoader
         self.json_loader = JSONLoader
 
-    def _clean_text(self, text: str) -> str:
+    def _clean_text(self, file_path: str, output_path: str) -> str:
         """
         Normalize text by removing extra spaces and newlines.
         """
-        return " ".join(text.split())
+        with open(file_path, "r", encoding="utf-8") as file:
+            text = file.read()
+        return self._normalize_text(text)
+    # def _clean_text(self, text: str) -> str:
+    #     """
+    #     Normalize text by removing extra spaces and newlines.
+    #     """
+    #     return " ".join(text.split())
 
     def chunk_text(self, path_to_text: str) -> List[Chunk]:
         """

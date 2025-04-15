@@ -24,28 +24,18 @@ async def process_submission(request: SubmissionRequest):
     )
 
     try:
-        if request.config:
-            if not submission_service.graph_builder.config.get("configurable"):
-                submission_service.graph_builder.config["configurable"] = {}
-
-            if "thread_id" not in request.config.get("configurable", {}):
-                request.config.setdefault("configurable", {})["thread_id"] = (
-                    submission_service.graph_builder.config.get(
-                        "configurable", {}
-                    ).get("thread_id", "default_thread")
-                )
-
-            submission_service.graph_builder.config.update(request.config)
-        else:
-            if not submission_service.graph_builder.config.get("configurable", {}).get(
-                "thread_id"
-            ):
-                submission_service.graph_builder.config.setdefault("configurable", {})[
-                    "thread_id"
-                ] = "default_thread"
-
+        # Initialize config if not present
+        if not submission_service.graph_builder.config.get("configurable"):
+            submission_service.graph_builder.config["configurable"] = {}
+            
+        # Handle thread_id directly from request - maintain nested structure
+        if request.thread_id:
+            submission_service.graph_builder.config["configurable"]["thread_id"] = request.thread_id
+        
+        # Rest of the function remains the same
         responses = submission_service.process_message(request.input_message)
-
+        
+        # Rest of the function remains the same
         ai_content = ""
         retrieved_docs = []
 
