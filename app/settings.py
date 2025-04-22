@@ -26,15 +26,18 @@ class Settings(BaseSettings):
     CHUNK_SIZE: int = 500
     CHUNK_OVERLAP: int = 50
 
+    QDRANT_API_KEY: Optional[str] = None
+
     VECTOR_STORE_TYPE: str = "in_memory"
     VECTOR_STORE_PATH: str = os.path.join(BASE_DIR, "data/vector_store")
 
-    CHAT_MODEL: str = "gpt-4o-mini"
+    QDRANT_URL: Optional[str] = None
+    COLLECTION_NAME: str = "the_origin_of_species"
+    QDRANT_TIMEOUT: int = 600
 
     model_config = SettingsConfigDict(
         env_file=[".env"], env_file_encoding="utf-8", extra="ignore"
     )
-
 
 @cache
 def get_settings() -> Settings:
@@ -44,3 +47,5 @@ def get_settings() -> Settings:
 settings = get_settings()
 
 os.makedirs(settings.VECTOR_STORE_PATH, exist_ok=True)
+
+print(settings.QDRANT_URL)

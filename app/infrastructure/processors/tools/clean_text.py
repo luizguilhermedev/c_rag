@@ -1,112 +1,75 @@
 import re
 from typing import Any, Dict
 from langchain_core.tools import tool
+from langchain_experimental.text_splitter import SemanticChunker
+from langchain_openai.embeddings import OpenAIEmbeddings
+from langchain_community.document_loaders import TextLoader, JSONLoader
+from app.domain.entities.chunk import Chunk
+from app.settings import settings
 
 
 from langchain.tools import tool
 import re
 
 @tool
-def clean_text(raw_text: str) -> str:
+def clean_text_(raw_text: str) -> str:
     """
-    Cleans text by removing Project Gutenberg headers, artificial line breaks, and spaces.
+    Cleans text by removing unnecessary spaces, newlines, and headers.
     """
-    start_marker = "*** START OF THE PROJECT GUTENBERG EBOOK"
-    if start_marker in raw_text:
-        raw_text = raw_text.split(start_marker, maxsplit=1)[-1]
+    pass
 
-    end_marker = "*** END OF THE PROJECT GUTENBERG EBOOK"
-    if end_marker in raw_text:
-        raw_text = raw_text.split(end_marker, maxsplit=1)[0]
+@tool
+def preprocess_text(text: str):
+    """
+    Function used to chunk text using SemanticChunker.
+    It uses the TextLoader from langchain to load the text and SemanticChunker to split it into chunks.
+    Args:
+        text (str): The Path of the text document to be chunked.
+    """
 
-    cleaned = re.sub(r"\n[A-Z \d,.'\-:;]{5,}\n", "\n", raw_text)
-    cleaned = re.sub(r'(?<!\n)\n(?!\n)', ' ', cleaned)
-    cleaned = re.sub(r'\n{2,}', '\n\n', cleaned)
-    cleaned = "\n".join([line.strip() for line in cleaned.splitlines()])
+    semantic_chunker = SemanticChunker(
+            embeddings=OpenAIEmbeddings(
+                model=settings.EMBEDDING_MODEL, openai_api_key=settings.OPENAI_API_KEY
+            ),
+            breakpoint_threshold_amount=0.7,
+            breakpoint_threshold_type="percentile",
+        )
+    loader = TextLoader
+    loader = loader(text)
+    documents = loader.load()
+    text_chunks = semantic_chunker.split_text(documents)
 
-    return cleaned
+    chunks = [Chunk(text=text, metadata={}) for text in text_chunks]
 
-# @tool()
-# def clean_text(text: str) -> str:
-#     """
-#     Clean and normalize text by removing unnecessary spaces, newlines, and headers.
-#     """
+    #save chunks to a file
+    with open("chunks.json", "w") as f:
+        for chunk in chunks:
+            f.write(chunk.text + "\n")
 
-#     start_marker = "*** START OF THE PROJECT GUTENBERG EBOOK"
-#     if start_marker in text:
-#         text = text.split(start_marker, maxsplit=1)[-1]
+    return chunks
 
-#     # 2. Cut content after book end
-#     end_marker = "*** END OF THE PROJECT GUTENBERG EBOOK"
-#     if end_marker in text:
-#         text = text.split(end_marker, maxsplit=1)[0]
 
-#     # 3. Remove uppercase headers and noise
-#     cleaned = re.sub(r"\n[A-Z \d,.'\-:;]{5,}\n", "\n", text)
+@tool
+def chunk_json(json: str):
+    """
+    Function used to chunk json using SemanticChunker."""
+    loader = JSONLoader
+    loaded_json = loader(json).load()
+    semantic_chunker = SemanticChunker(
+            embeddings=OpenAIEmbeddings(
+                model=settings.EMBEDDING_MODEL, openai_api_key=settings.OPENAI_API_KEY
+            ),
+            breakpoint_threshold_amount=0.7,
+            breakpoint_threshold_type="percentile",
+        )
+    chunking = semantic_chunker.split_text(loaded_json)
+    chunks = [Chunk(text=text, metadata={}) for text in chunking]
 
-#     # 4. Join artificial line breaks
-#     cleaned = re.sub(r'(?<!\n)\n(?!\n)', ' ', cleaned)
+    with open("chunks.json", "w") as f:
+        for chunk in chunks:
+            f.write(chunk.text + "\n")
+    return chunks
 
-#     # 5. Normalize paragraphs
-#     cleaned = re.sub(r'\n{2,}', '\n\n', cleaned)
 
-#     # 6. Remove unnecessary spaces
-#     cleaned = "\n".join([line.strip() for line in cleaned.splitlines()])
+
     
-#     return cleaned
-    
-# @tool()
-# def extract_sections(self, text: str) -> Dict[str, str]:
-#     """
-#     Extract chapter/section titles and their content from document text.
-#     Returns a dictionary mapping section titles to their content.
-#     """
-#     # Simple section extraction with regex
-#     # Assumes chapters/sections start with "CHAPTER" or roman numerals
-#     sections = {}
-#     pattern = r"(?:CHAPTER|Chapter)\s+(?:[IVX]+|\d+)[.\s]+(.+?)(?=(?:CHAPTER|Chapter)\s+(?:[IVX]+|\d+)|$)"
-#     matches = re.finditer(pattern, text, re.DOTALL)
-    
-#     for i, match in enumerate(matches):
-#         title = f"Chapter {i+1}"
-#         content = match.group(1).strip()
-#         sections[title] = content
-        
-#     return sections
-
-# @tool()
-# def analyze_document(self, text: str) -> Dict[str, Any]:
-#     """
-#     Analyze document to identify format, language, structure and potential issues.
-#     """
-#     result = {
-#         "format": "unknown",
-#         "language": "unknown",
-#         "word_count": len(text.split()),
-#         "char_count": len(text),
-#         "issues": []
-#     }
-    
-#     # Format detection
-#     if "*** START OF THE PROJECT GUTENBERG EBOOK" in text:
-#         result["format"] = "project_gutenberg"
-    
-#     # Language detection (simple heuristic)
-#     english_markers = ["the", "and", "of", "to", "in", "that"]
-#     spanish_markers = ["el", "la", "los", "en", "y", "que"]
-    
-#     english_count = sum(1 for word in text.lower().split() if word in english_markers)
-#     spanish_count = sum(1 for word in text.lower().split() if word in spanish_markers)
-    
-#     if english_count > spanish_count:
-#         result["language"] = "english"
-#     elif spanish_count > english_count:
-#         result["language"] = "spanish"
-        
-#     # Issue detection
-#     if "�" in text:
-#         result["issues"].append("encoding_errors")
-#     if len(text.strip()) == 0:
-#         result["issues"].append("empty_document")
-        
-#     return result

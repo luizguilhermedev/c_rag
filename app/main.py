@@ -4,6 +4,9 @@ from fastapi.responses import RedirectResponse
 from app.presentation.api.endpoints.ai_submission_endpoint import (
     router as ai_submission_router,
 )
+from app.presentation.api.endpoints.react_agent_endpoint import (
+    router as react_agent_router,
+)
 
 API_PREFIX = "/api/v1"
 
@@ -23,3 +26,4 @@ def redirect_to_docs():
 
 
 app.include_router(ai_submission_router, prefix=API_PREFIX)
+app.include_router(react_agent_router, prefix=API_PREFIX)
