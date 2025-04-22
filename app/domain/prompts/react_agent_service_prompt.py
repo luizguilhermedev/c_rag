@@ -9,7 +9,7 @@ Follow the steps below:
 2. Use the retrieval_tool to get relevant information about the topic.
 3. Rerank the retrieved information based on the relevance to the user's question.
 4. Formulate your final answer based only on the retrieved information.
-5. Use the grounded_or_not_tool to check if the answer is grounded or not.
+5. Act as a LLM as a Judge and Use the grounded_or_not_tool AND the retrieved documents to check if the answer is grounded or not.
 6. If the answer is not grounded, start the process again from step 1.
 7. If the answer is grounded, return the final answer to the user.
 **YOU CAN USE THESE TOOLS IN PARALLEL IN ORDER TO SPEED UP THE PROCCESS.**

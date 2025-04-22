@@ -27,7 +27,7 @@ class ReactAgent:
                 message.pretty_print()
 
 if __name__ == "__main__":
-    inputs = {"messages": [("user", "What Darwin discovered in galapagos?")]}
+    inputs = {"messages": [("user", "What make Darwin to write th Origin of the species?")]}
     config = {"configurable": {"thread_id": "thread-10"}}
     agent = ReactAgent()
     agent.stream(inputs, config)
